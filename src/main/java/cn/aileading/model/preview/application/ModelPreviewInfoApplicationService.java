@@ -4,6 +4,7 @@ import cn.aileading.model.preview.domain.ModelFirstType;
 import cn.aileading.model.preview.domain.ModelPreviewInfo;
 import cn.aileading.model.preview.domain.ModelSecondType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,38 +21,67 @@ public class ModelPreviewInfoApplicationService {
         List<ModelPreviewInfo> modelPreviewInfoList = new ArrayList<>();
 
         for (ModelSecondType modelSecondType : ModelSecondType.values()) {
-            String path = ModelRootRegistry.MODEL_ROOT_REGISTRY.get(modelFirstType) + "\\" + modelSecondType.name();
+            /*
+             * 1. 获取模型所在地址
+             */
+            String path = ModelRootRegistry.MODEL_ROOT_REGISTRY.get(modelFirstType) + File.separator + modelSecondType.name();
+            if (!new File(path).exists()) {
+                continue;
+            }
+
+            /*
+             * 2. 获取模型列表
+             */
             File[] files = new File(path).listFiles((dir, name) -> name.endsWith(".safetensors") || name.endsWith(".ckpt"));
             if (files == null || files.length == 0) {
                 continue;
             }
+
+            /*
+             * 3. 处理模型返回体
+             */
             modelPreviewInfoList.addAll(Arrays.stream(files).map(x -> {
                 String baseName = x.getName().substring(0, x.getName().lastIndexOf('.'));
-                ModelPreviewInfo modelPreviewInfo = new ModelPreviewInfo().setName(modelSecondType.name() + "/" + baseName);
-                String pic = path + "\\" + baseName + ".png";
+                ModelPreviewInfo modelPreviewInfo = new ModelPreviewInfo().setName(modelSecondType.name() + File.separator + baseName);
+                String pic = path + File.separator + baseName + ".png";
                 if (!new File(pic).exists()) {
-                    pic = ModelRootRegistry.MODEL_ROOT_REGISTRY.get(modelFirstType) + "\\" + "empty.png";
+                    try {
+                        File emptyPic = ResourceUtils.getFile("classpath:empty.png");
+                        if (emptyPic.exists()) {
+                            pic = emptyPic.getAbsolutePath();
+                        }
+                    } catch (IOException e) {
+                        // 静默
+                    }
                 }
                 modelPreviewInfo.setPic(pic);
 
-                String useTipsFile = path + "\\" + baseName + "_使用说明.txt";
+                String useTipsFile = path + File.separator + baseName + "_使用说明.txt";
                 if (!new File(useTipsFile).exists()) {
-                    useTipsFile = ModelRootRegistry.MODEL_ROOT_REGISTRY.get(modelFirstType) + "\\" + "empty_使用说明.txt";
+                    try {
+                        new File(useTipsFile).createNewFile();
+                    } catch (IOException e) {
+                        // 静默
+                    }
                 }
                 try {
                     modelPreviewInfo.setUseTips(Files.readString(Path.of(useTipsFile)));
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    // 静默
                 }
 
-                String linkFile = path + "\\" + baseName + "_下载地址.txt";
+                String linkFile = path + File.separator + baseName + "_下载地址.txt";
                 if (!new File(linkFile).exists()) {
-                    linkFile = ModelRootRegistry.MODEL_ROOT_REGISTRY.get(modelFirstType) + "\\" + "empty_下载地址.txt";
+                    try {
+                        new File(linkFile).createNewFile();
+                    } catch (IOException e) {
+                        // 静默
+                    }
                 }
                 try {
                     modelPreviewInfo.setLink(Files.readString(Path.of(linkFile)));
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    // 静默
                 }
 
                 return modelPreviewInfo;
