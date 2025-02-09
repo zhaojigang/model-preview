@@ -42,20 +42,7 @@ public class ModelPreviewInfoApplicationService {
              */
             modelPreviewInfoList.addAll(Arrays.stream(files).map(x -> {
                 String baseName = x.getName().substring(0, x.getName().lastIndexOf('.'));
-                ModelPreviewInfo modelPreviewInfo = new ModelPreviewInfo().setName(modelSecondType.name() + File.separator + baseName);
-                String pic = path + File.separator + baseName + ".png";
-                if (!new File(pic).exists()) {
-                    try {
-                        File emptyPic = ResourceUtils.getFile("classpath:empty.png");
-                        if (emptyPic.exists()) {
-                            pic = emptyPic.getAbsolutePath();
-                        }
-                    } catch (IOException e) {
-                        // 静默
-                    }
-                }
-                modelPreviewInfo.setPic(pic);
-
+                ModelPreviewInfo modelPreviewInfo = new ModelPreviewInfo().setName(modelSecondType.name() + File.separator + baseName).setPic(path + File.separator + baseName + ".png");
                 String useTipsFile = path + File.separator + baseName + "_使用说明.txt";
                 if (!new File(useTipsFile).exists()) {
                     try {
