@@ -1,5 +1,5 @@
 package cn.aileading.model.preview.domain;
 
 public enum ModelSecondType {
-    sdxl,flux,sd15,pony
+    sdxl,flux,sd15,pony,hunyuan
 }

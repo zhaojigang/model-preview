@@ -32,7 +32,7 @@ public class ModelPreviewInfoApplicationService {
             /*
              * 2. 获取模型列表
              */
-            File[] files = new File(path).listFiles((dir, name) -> name.endsWith(".safetensors") || name.endsWith(".ckpt"));
+            File[] files = new File(path).listFiles((dir, name) -> name.endsWith(".safetensors") || name.endsWith(".ckpt") || name.endsWith(".pt"));
             if (files == null || files.length == 0) {
                 continue;
             }
