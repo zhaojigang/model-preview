@@ -11,6 +11,10 @@ public class ModelRootRegistry {
     public static final Map<ModelFirstType, String> MODEL_ROOT_REGISTRY = Map.of(
             ModelFirstType.checkpoint, baseComfyUIModelPath + File.separator + "checkpoints",
             ModelFirstType.lora, baseComfyUIModelPath + File.separator + "loras",
-            ModelFirstType.diffusionModel, baseComfyUIModelPath + File.separator + "diffusion_models");
+            ModelFirstType.diffusionModel, baseComfyUIModelPath + File.separator + "diffusion_models",
+            ModelFirstType.controlNet, baseComfyUIModelPath + File.separator + "controlnet",
+            ModelFirstType.upscaleModels, baseComfyUIModelPath + File.separator + "upscale_models",
+            ModelFirstType.vae, baseComfyUIModelPath + File.separator + "vae"
+            );
 
 }
